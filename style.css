@@ -79,7 +79,9 @@ button {
     display: flex;
     align-items: center;  
     margin-left: 65px;
+    margin-top: 15px;
 }
+
 
 .menu-container {
     position: relative;

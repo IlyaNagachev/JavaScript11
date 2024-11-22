@@ -38,8 +38,13 @@
                 <div class="navContent_rightSide2">
                     <button><img src="./img/page 1/icon4.svg" alt="icon4"></button>
                 </div>
-                <div class="navContent_rightSide3">
-                    <button><img src="./img/page 1/icon5.svg" alt="icon5"></button>
+                <div id="cart-modal" class="navContent_rightSide3">
+                    <button><img src="./img/page 1/icon5.svg" alt="icon5">
+                        <div class="cart-modal-content">
+                            <span class="close-modal">&times;</span>
+                            <ul class="cart">
+                            </ul>
+                        </div></button>
                 </div>
             </nav>
         </header>
@@ -171,9 +176,9 @@
         <script src="./script.js"></script>
         <script src="./data.js"></script>
         <script>
-
-            const data = JSON.parse(dataProduct);
+            const data = JSON.parse(dataProduct); 
             const cardList = document.querySelector(".cardList");
+            const cart = document.querySelector(".cart");
 
             data.forEach((element) => {
                 const itemEl = document.createElement("div");
@@ -182,18 +187,20 @@
                 const itemImg = document.createElement("img");
                 itemImg.src = element.url;
 
-                const itemHeading = document.createElement('h1');
+                const itemHeading = document.createElement("h1");
                 itemHeading.textContent = element.name;
 
-                const itemText = document.createElement('p');
+                const itemText = document.createElement("p");
                 itemText.textContent = element.text;
 
-                const itemPrice = document.createElement('h2');
+                const itemPrice = document.createElement("h2");
                 itemPrice.textContent = `$${element.price}`;
 
-                const itemButton = document.createElement('button');
-                itemButton.classList.add('add-to-cart');
-                itemButton.textContent = 'Add to Cart';
+                const itemButton = document.createElement("button");
+                itemButton.classList.add("add-to-cart");
+                itemButton.textContent = "Add to Cart";
+
+                itemButton.setAttribute("data-id", element["product-list"]);
 
                 cardList.appendChild(itemEl);
                 itemEl.appendChild(itemImg);
@@ -202,6 +209,56 @@
                 itemEl.appendChild(itemPrice);
                 itemEl.appendChild(itemButton);
             });
+
+            function addToCart(productId) {
+                const product = data.find((item) => item["product-list"] === productId);
+
+                if (product) {
+                    const cartItem = document.createElement("li");
+                    cartItem.classList.add("cart-item");
+                    cartItem.setAttribute("data-id", productId);
+
+                    const itemImg = document.createElement("img");
+                    itemImg.src = product.url;
+                    itemImg.alt = product.name;
+                    itemImg.width = 50;
+
+                    const itemTitle = document.createElement("h3");
+                    itemTitle.textContent = product.name;
+
+                    const itemPrice = document.createElement("p");
+                    itemPrice.textContent = `$${product.price}`;
+
+                    const removeButton = document.createElement("button");
+                    removeButton.classList.add("remove-item");
+                    removeButton.textContent = "X";
+
+                    cartItem.appendChild(itemImg);
+                    cartItem.appendChild(itemTitle);
+                    cartItem.appendChild(itemPrice);
+                    cartItem.appendChild(removeButton);
+
+                    cart.appendChild(cartItem);
+                }
+            }
+
+            function removeFromCart(event) {
+                if (event.target.classList.contains("remove-item")) {
+                    const cartItem = event.target.closest(".cart-item");
+                    if (cartItem) {
+                        cartItem.remove();
+                    }
+                }
+            }
+
+            document.addEventListener("click", (event) => {
+                if (event.target.classList.contains("add-to-cart")) {
+                    const productId = event.target.getAttribute("data-id");
+                    addToCart(productId);
+                }
+            });
+
+            cart.addEventListener("click", removeFromCart);
         </script>
     </body>
 </html>
